@@ -69,7 +69,7 @@
         <framework src="UserNotifications.framework" />
         <framework src="CoreLocation.framework" />
 
-        <header-file src="src/ios/APPLocalNotification.h" />
+        <header-file src="src/ios/APPLocalNotification.h" type="BridgingHeader" />
         <source-file src="src/ios/APPLocalNotification.m" />
 
         <header-file src="src/ios/APPNotificationCategory.h" />
