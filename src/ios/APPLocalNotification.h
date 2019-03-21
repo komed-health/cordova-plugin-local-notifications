@@ -51,6 +51,6 @@
 - (void) notifications:(CDVInvokedUrlCommand*)command;
 
 // Komed fork. Added as public to call this method directly from push plugin.
-- (void) scheduleNotification:(APPNotificationContent*)notification
+- (void) scheduleNotification:(APPNotificationContent*)notification;
 
 @end
