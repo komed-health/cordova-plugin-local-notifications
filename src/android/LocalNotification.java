@@ -61,8 +61,6 @@ import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERE
 @SuppressWarnings({"Convert2Diamond", "Convert2Lambda"})
 public class LocalNotification extends CordovaPlugin {
 
-    public static Context context;
-
     // Reference to the web view for static access
     private static WeakReference<CordovaWebView> webView = null;
 
@@ -83,7 +81,6 @@ public class LocalNotification extends CordovaPlugin {
     @Override
     public void initialize (CordovaInterface cordova, CordovaWebView webView) {
         LocalNotification.webView = new WeakReference<CordovaWebView>(webView);
-        context = cordova.getActivity();
     }
 
     /**
@@ -641,8 +638,8 @@ public class LocalNotification extends CordovaPlugin {
     /**
      * Notification manager instance for another plugin.
      */
-    public static Manager getManager() {
-        return Manager.getInstance(context);
+    public static Manager getManager(Context pluginContext) {
+        return Manager.getInstance(pluginContext);
     }
 
 }
