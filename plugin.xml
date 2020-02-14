@@ -87,6 +87,9 @@
 
         <header-file src="src/ios/UNNotificationRequest+APPLocalNotification.h" />
         <source-file src="src/ios/UNNotificationRequest+APPLocalNotification.m" />
+
+        <resource-file src="src/sounds/komed_notification_default.wav" target="komed_notification_default.wav"/>
+        <resource-file src="src/sounds/komed_notification_priority.wav" target="komed_notification_priority.wav"/>
     </platform>
 
     <!-- android -->
