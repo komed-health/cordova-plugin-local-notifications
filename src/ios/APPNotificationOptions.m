@@ -159,32 +159,25 @@ static NSInteger WEEKDAYS[8] = { 0, 2, 3, 4, 5, 6, 7, 1 };
 }
 
 /**
- * The sound file for the notification.
- *
+ * Sets the sound for the notification.
+ * Uses a default Komed sound by default, or priority sound if
+ * "priority" option given. Optionally it is possible to override default
+ * by providing a filepath. If given file does not exist then a system default sound is used.
  * @return [ UNNotificationSound* ]
  */
 - (UNNotificationSound*) sound
 {
-    NSString* path = dict[@"sound"];
-    NSString* file;
-
-    if ([path isKindOfClass:NSNumber.class]) {
-        return [path boolValue] ? [UNNotificationSound defaultSound] : NULL;
+    // Forked for Komed Health custom sounds
+    NSString* soundFile =@"komed_notification_default.wav";
+    NSString* sound = dict[@"sound"];
+    if([sound isEqual: @"priority"]) { // use priority sound
+        soundFile = @"komed_notification_priority.wav";
+    } // check if a file path is given then override the default
+    else if([sound isKindOfClass:[NSString class]] && [sound pathExtension].length) {
+        soundFile = sound;
     }
-
-    if (!path.length)
-        return NULL;
-
-    if ([path hasPrefix:@"file:/"]) {
-        file = [self soundNameForAsset:path];
-    } else
-    if ([path hasPrefix:@"res:"]) {
-        file = [self soundNameForResource:path];
-    }
-
-    return [UNNotificationSound soundNamed:file];
+    return [UNNotificationSound soundNamed:soundFile];
 }
-
 
 /**
  * Additional content to attach.
