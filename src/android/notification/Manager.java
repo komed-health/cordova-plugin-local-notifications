@@ -28,9 +28,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
 
+import com.komedhealth.frontend.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,11 +57,11 @@ import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERE
  */
 public final class Manager {
 
-    // TODO: temporary
-    static final String CHANNEL_ID = "default-channel-id";
+    static final String DEFAULT_CHANNEL_ID = "default-channel-id";
+    private static final CharSequence DEFAULT_CHANNEL_NAME = "Default channel";
 
-    // TODO: temporary
-    private static final CharSequence CHANNEL_NAME = "Default channel";
+    static final String PRIORITY_CHANNEL_ID = "priority-channel-id";
+    private static final CharSequence PRIORITY_CHANNEL_NAME = "Priority channel";
 
     // The application context
     private Context context;
@@ -114,15 +117,34 @@ public final class Manager {
         if (SDK_INT < O)
             return;
 
-        NotificationChannel channel = mgr.getNotificationChannel(CHANNEL_ID);
+        // To set a sound to notifications in Oreo, we must set sound on NotificationChannel 
+        // and not on Notification Builder itself.
+        // Without notification channel custom sound will not work
+        // https://github.com/katzer/cordova-plugin-local-notifications/issues/1605
+        // For multiple sound we need multiple NotificationChannel
 
-        if (channel != null)
-            return;
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
 
-        channel = new NotificationChannel(
-                CHANNEL_ID, CHANNEL_NAME, IMPORTANCE_HIGH);
+        NotificationChannel defaultChannel = mgr.getNotificationChannel(DEFAULT_CHANNEL_ID);
+        if (defaultChannel == null) {
+            defaultChannel = new NotificationChannel(
+                    DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_NAME, IMPORTANCE_HIGH);
+            Uri defaultSound = Uri.parse("android.resource://com.komedhealth.frontend/" + R.raw.komed_notification_default);
+            defaultChannel.setSound(defaultSound, attributes);
+            mgr.createNotificationChannel(defaultChannel);
+        }
 
-        mgr.createNotificationChannel(channel);
+        NotificationChannel priorityChannel = mgr.getNotificationChannel(PRIORITY_CHANNEL_ID);
+        if (priorityChannel == null) {
+            priorityChannel = new NotificationChannel(
+                    PRIORITY_CHANNEL_ID, PRIORITY_CHANNEL_NAME, IMPORTANCE_HIGH);
+            Uri prioritySound = Uri.parse("android.resource://com.komedhealth.frontend/" + R.raw.komed_notification_priority);
+            priorityChannel.setSound(prioritySound, attributes);
+            mgr.createNotificationChannel(priorityChannel);
+        }
+
     }
 
     /**

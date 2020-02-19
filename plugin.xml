@@ -230,6 +230,9 @@
         <source-file
             src="src/android/notification/Request.java"
             target-dir="src/de/appplant/cordova/plugin/notification" />
+
+        <resource-file src="src/sounds/komed_notification_default.wav" target="res/raw/komed_notification_default.wav" />
+        <resource-file src="src/sounds/komed_notification_priority.wav" target="res/raw/komed_notification_priority.wav" />
     </platform>
 
     <!-- windows -->

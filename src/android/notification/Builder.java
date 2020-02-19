@@ -22,6 +22,7 @@
 package de.appplant.cordova.plugin.notification;
 
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,12 +33,15 @@ import android.support.v4.app.NotificationCompat.MessagingStyle.Message;
 import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaSessionCompat;
 
+import com.komedhealth.frontend.R;
 import java.util.List;
 import java.util.Random;
 
 import de.appplant.cordova.plugin.notification.action.Action;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.O;
 import static de.appplant.cordova.plugin.notification.Notification.EXTRA_UPDATE;
 
 /**
@@ -116,17 +120,33 @@ public final class Builder {
             return new Notification(context, options);
         }
 
-        Uri sound     = options.getSound();
+        // Forked for Komed Health custom sounds
+        // For pre-oreo device we need to use setSound method in NotificationBuilder
+        // Uses a default Komed sound by default, or priority sound if "priority" option given.
+        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/res\\raw\\komed_notification_default");
+        String channelId = Manager.DEFAULT_CHANNEL_ID;
+
+        String sound = options.getSound();
+        if (sound != null)
+            if (sound.equalsIgnoreCase("priority")) { // for priority notification sound
+                soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/komed_notification_priority");
+                if (SDK_INT >= O)
+                    channelId = Manager.PRIORITY_CHANNEL_ID;
+            } else if (!sound.isEmpty()) { // for other notification sounds
+                soundUri = Uri.parse(sound);
+            }
+
         Bundle extras = new Bundle();
 
         extras.putInt(Notification.EXTRA_ID, options.getId());
-        extras.putString(Options.EXTRA_SOUND, sound.toString());
+        extras.putString(Options.EXTRA_SOUND, soundUri.toString());
 
         builder = findOrCreateBuilder()
                 .setDefaults(options.getDefaults())
                 .setExtras(extras)
                 .setOnlyAlertOnce(false)
-                .setChannelId(options.getChannel())
+                // sets priority oriented channel and not default channel
+                .setChannelId(channelId)
                 .setContentTitle(options.getTitle())
                 .setContentText(options.getText())
                 .setTicker(options.getText())
@@ -143,8 +163,8 @@ public final class Builder {
                 .setTimeoutAfter(options.getTimeout())
                 .setLights(options.getLedColor(), options.getLedOn(), options.getLedOff());
 
-        if (sound != Uri.EMPTY && !isUpdate()) {
-            builder.setSound(sound);
+        if (soundUri != Uri.EMPTY && !isUpdate()) {
+            builder.setSound(soundUri);
         }
 
         if (options.isWithProgressBar()) {
