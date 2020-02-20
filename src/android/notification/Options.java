@@ -212,7 +212,7 @@ public final class Options {
      * The channel id of that notification.
      */
     String getChannel() {
-        return options.optString("channel", Manager.CHANNEL_ID);
+        return options.optString("channel", Manager.DEFAULT_CHANNEL_ID);
     }
 
     /**
@@ -342,10 +342,10 @@ public final class Options {
     }
 
     /**
-     * Sound file path for the local notification.
+     * Sound file string for the local notification.
      */
-    Uri getSound() {
-        return assets.parse(options.optString("sound", null));
+    String getSound() {
+        return options.optString("sound", null);
     }
 
     /**
@@ -482,8 +482,8 @@ public final class Options {
      * Gets the notifications priority.
      */
     int getPrio() {
-        int prio = options.optInt("priority");
-        // max priority for all notifications
+        // return options.optInt("priority");
+        // To show head-up notification we need to set max priority. https://github.com/katzer/cordova-plugin-local-notifications/issues/1589
         return PRIORITY_MAX;
     }
 
