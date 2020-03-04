@@ -57,11 +57,13 @@ import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERE
  */
 public final class Manager {
 
-    static final String DEFAULT_CHANNEL_ID = "default-channel-id";
-    private static final CharSequence DEFAULT_CHANNEL_NAME = "Default channel";
+    static final String DEFAULT_CHANNEL_ID_OLD = "default-channel-id";
 
-    static final String PRIORITY_CHANNEL_ID = "priority-channel-id";
-    private static final CharSequence PRIORITY_CHANNEL_NAME = "Priority channel";
+    static final String DEFAULT_CHANNEL_ID = "default-channel";
+    private static final CharSequence DEFAULT_CHANNEL_NAME = "Default Channel";
+
+    static final String PRIORITY_CHANNEL_ID = "priority-channel";
+    private static final CharSequence PRIORITY_CHANNEL_NAME = "Priority Channel";
 
     // The application context
     private Context context;
@@ -126,6 +128,12 @@ public final class Manager {
         AudioAttributes attributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .build();
+
+        // If old notification channel exists, we need to delete it
+        NotificationChannel defaultChannelOld = mgr.getNotificationChannel(DEFAULT_CHANNEL_ID_OLD);
+        if (defaultChannelOld != null) {
+            mgr.deleteNotificationChannel(DEFAULT_CHANNEL_ID_OLD);
+        }
 
         NotificationChannel defaultChannel = mgr.getNotificationChannel(DEFAULT_CHANNEL_ID);
         if (defaultChannel == null) {

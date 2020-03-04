@@ -132,11 +132,6 @@ public final class Builder {
                 soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/komed_notification_priority");
                 if (SDK_INT >= O)
                     channelId = Manager.PRIORITY_CHANNEL_ID;
-            } else if (!sound.isEmpty()) { // for other notification sounds
-                // check if resource exists
-                int checkExistence = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
-                if (checkExistence != 0)
-                    soundUri = Uri.parse(sound);
             }
         }
 
