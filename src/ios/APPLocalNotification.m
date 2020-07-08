@@ -518,8 +518,11 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
 
     handler();
 
-    if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class])
-        return;
+    // KOMED: This code prevents notification click working from notification extension
+    // the trigger type cannot be changed on NotificationExtension and there is no known
+    // reason why UNPushNotificationTrigger notifications should be ignored here.
+    //    if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class])
+    //        return;
 
     NSMutableDictionary* data = [[NSMutableDictionary alloc] init];
     NSString* action          = response.actionIdentifier;
